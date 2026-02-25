@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report Maintenance Issue</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Report an Issue</h2>
+
+  <label>
+    Issue Type
+    <select id="asset">
+      <option value="table">Table</option>
+      <option value="chair">Chair</option>
+    </select>
+  </label>
+
+  <label>
+    Location
+    <input type="text" id="location" placeholder="e.g. Lab 2" />
+  </label>
+
+  <label>
+    Description
+    <textarea id="description" rows="4" placeholder="Describe the issue"></textarea>
+  </label>
+
+  <button onclick="report()">Report Issue</button>
+
+  <script>
+    async function report() {
+      const asset = document.getElementById("asset").value;
+      const location = document.getElementById("location").value;
+      const description = document.getElementById("description").value;
+
+      const summary = `Fix broken ${asset}`;
+
+      try {
+        const res = await fetch(
+          "https://b16f3ebb-2e27-46a7-8c23-dab5a214c689.hello.atlassian-dev.net/x1/gtqVTWhL-eDqjRJ7fqchBZdnJRU",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fields: {
+                summary,
+                description: {
+                  type: "doc",
+                  version: 1,
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: `Asset: ${asset}\nLocation: ${location}\n\n${description}`
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            })
+          }
+        );
+
+        const text = await res.text();
+        alert(`Status: ${res.status}\n${text}`);
+      } catch (e) {
+        alert("Fetch failed: " + e.message);
+      }
+    }
+  </script>
+
+</body>
+</html>

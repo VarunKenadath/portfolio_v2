@@ -1,0 +1,41 @@
+modules:
+  webtrigger:
+    - key: create-issue-webtrigger
+      function: create-issue-function
+      response:
+        type: dynamic
+
+  jira:projectPage:
+    - key: hello-world-hello-world-project-page
+      title: hello_world
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+  #    - key: sla-analytics-page
+  #      title: SLA Analytics
+  #      resource: analytics-ui
+  #      resolver:
+  #        function: analytics-resolver
+  #      render: native
+  function:
+    - key: resolver
+      handler: resolvers/resolver.handler
+    - key: create-issue-function
+      handler: create_issue_handler.handler
+
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+
+permissions:
+  scopes:
+    - write:jira-work
+    - read:jira-work
+
+app:
+  runtime:
+    name: nodejs20.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/b16f3ebb-2e27-46a7-8c23-dab5a214c689
